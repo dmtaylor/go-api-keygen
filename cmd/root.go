@@ -10,6 +10,7 @@ import (
 )
 
 var optLen int
+var numKeys int
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -28,16 +29,19 @@ func Execute() {
 
 func genApiKey(cmd *cobra.Command, args []string) error {
 	data := make([]byte, optLen)
-	_, err := rand.Read(data)
-	if err != nil {
-		return err
+	for i := 0; i < numKeys; i++ {
+		_, err := rand.Read(data)
+		if err != nil {
+			return err
+		}
+		key := base64.RawURLEncoding.EncodeToString(data)
+		fmt.Println(key)
 	}
-	key := base64.RawURLEncoding.EncodeToString(data)
-	fmt.Println(key)
 
 	return nil
 }
 
 func init() {
 	rootCmd.Flags().IntVarP(&optLen, "length", "l", 8, "API key bytes")
+	rootCmd.Flags().IntVarP(&numKeys, "count", "n", 1, "Number of keys to generate")
 }
